@@ -1,9 +1,10 @@
+
 pipeline {
     agent any
 
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
-        PATH = "${JAVA_HOME}/bin:${PATH}"
+        PATH+JAVA = "${JAVA_HOME}/bin"
         SONAR_HOST_URL = 'http://sonar.leancloudandevops.online:9000'
     }
 
@@ -37,28 +38,25 @@ pipeline {
             }
         }
 
-
-
         stage('SonarQube Analysis') {
-             steps {
-        withCredentials([
-            string(
-                credentialsId: 'sonar-token',
-                variable: 'SONAR_TOKEN'
-            )
-        ]) {
-            sh '''
-                mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                  -Dsonar.projectKey=DevOps-Calculator-Web-Ragavisree \
-                  -Dsonar.projectName="DevOps Calculator Web - Ragavisree" \
-                  -Dsonar.host.url="$SONAR_HOST_URL" \
-                  -Dsonar.token="$SONAR_TOKEN" \
-                  -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-            '''
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'sonar-token',
+                        variable: 'SONAR_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                          -Dsonar.projectKey=DevOps-Calculator-Web-Ragavisree \
+                          -Dsonar.projectName="DevOps Calculator Web - Ragavisree" \
+                          -Dsonar.host.url="$SONAR_HOST_URL" \
+                          -Dsonar.token="$SONAR_TOKEN" \
+                          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    '''
+                }
+            }
         }
-    }
-}
-
 
         stage('Verify WAR') {
             steps {
@@ -68,18 +66,20 @@ pipeline {
                 '''
             }
         }
-    }
 
-            stage('Deploy to Nexus') {
+        stage('Deploy to Nexus') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'nexus-ragavishree',
-                    usernameVariable: 'NEXUS_USERNAME',
-                    passwordVariable: 'NEXUS_PASSWORD'
-                )]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'nexus-ragavishree',
+                        usernameVariable: 'NEXUS_USERNAME',
+                        passwordVariable: 'NEXUS_PASSWORD'
+                    )
+                ]) {
                     sh '''
                         set +x
                         umask 077
+
                         cat > "$WORKSPACE/.mvn-settings.xml" <<EOF
 <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
   <servers>
@@ -91,11 +91,13 @@ pipeline {
   </servers>
 </settings>
 EOF
+
                         mvn -B -s "$WORKSPACE/.mvn-settings.xml" deploy
                     '''
                 }
             }
-
+        }
+    }
 
     post {
         always {
