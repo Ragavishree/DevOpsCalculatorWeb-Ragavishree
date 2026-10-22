@@ -70,6 +70,33 @@ pipeline {
         }
     }
 
+            stage('Deploy to Nexus') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'nexus-ragavishree',
+                    usernameVariable: 'NEXUS_USERNAME',
+                    passwordVariable: 'NEXUS_PASSWORD'
+                )]) {
+                    sh '''
+                        set +x
+                        umask 077
+                        cat > "$WORKSPACE/.mvn-settings.xml" <<EOF
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
+  <servers>
+    <server>
+      <id>nexus-releases</id>
+      <username>${NEXUS_USERNAME}</username>
+      <password>${NEXUS_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>
+EOF
+                        mvn -B -s "$WORKSPACE/.mvn-settings.xml" deploy
+                    '''
+                }
+            }
+
+
     post {
         always {
             junit allowEmptyResults: true,
