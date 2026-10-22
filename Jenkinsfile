@@ -1,10 +1,9 @@
-
 pipeline {
     agent any
 
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
-        PATH+JAVA = "${JAVA_HOME}/bin"
+        PATH = "${JAVA_HOME}/bin:${PATH}"
         SONAR_HOST_URL = 'http://sonar.leancloudandevops.online:9000'
     }
 
