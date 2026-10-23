@@ -39,6 +39,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
+                withSonarQubeEnv('sonar-server') {
                 withCredentials([
                     string(
                         credentialsId: 'sonar-token',
@@ -55,7 +56,17 @@ pipeline {
                     '''
                 }
             }
+            }
         }
+
+        stage('Quality Gate') {
+    steps {
+        timeout(time: 5, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
+
 
         stage('Verify WAR') {
             steps {
