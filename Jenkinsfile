@@ -200,6 +200,15 @@ stage('Deploy to Tomcat via Ansible') {
         }
 
         success {
+            echo 'Build, tests, analysis, deployments, and archiving succeeded.'
+            emailext(
+            to: 'ragavisree20@gmail.com',
+            subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """Build succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Build URL: ${env.BUILD_URL}
+Status: ${currentBuild.currentResult}"""
+        )
+
         slackSend(
             channel: '#devops-builds',
             color: 'good',
@@ -209,6 +218,15 @@ Build URL: ${env.BUILD_URL}"""
     }
 
     failure {
+        echo 'Pipeline failed. Review the Jenkins console output.'
+        emailext(
+            to: 'ragavisree20@gmail.com',
+            subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """Build failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Build URL: ${env.BUILD_URL}
+Please check the Jenkins console output."""
+        )
+
         slackSend(
             channel: '#devops-builds',
             color: 'danger',
