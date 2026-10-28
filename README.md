@@ -40,3 +40,4 @@ The Jenkinsfile's `JAVA_HOME` is set for the lab Jenkins agent environment. If y
 "ragavishree"
 hlo i am devops engineer
 update the version 1.0.1
+update the jenkins adding docker stage
