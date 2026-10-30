@@ -7,7 +7,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>DevOpsCalculatorWeb-RAGAVISHREE</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>war</packaging>
     <name>DevOps Calculator - RAGAVISHREE</name>
     <description>Calculator web application for DevOps CI/CD training by RAGAVISHREE</description>
