@@ -4,7 +4,7 @@ pipeline {
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
         PATH = "${JAVA_HOME}/bin:${PATH}"
-        SONAR_HOST_URL = 'http://3.228.6.71:9000'
+        SONAR_HOST_URL = 'http://http://sonarqube.ragavishree.publicvm.com:9000'
     }
 
     stages {
